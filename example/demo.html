@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HTML5 Deck of Cards</title>
+    <link href="example.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600|Ubuntu+Condensed" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div id="container"></div>
+    <script src="../dist/deck.js"></script>
+    <script>
+	var $container = document.getElementById('container');
+var deck = Deck();
+
+		// Select the first card
+		var card = deck.cards[0];
+
+		// Add it to an html container
+		card.mount($container);
+
+		// Allow to move/drag it
+		card.enableDragging();
+		card.disableDragging();
+
+		// Allow to flip it
+		card.enableFlipping();
+		card.disableFlipping();
+
+		// Flip card
+		deck.flip();
+
+		// Display card front or back
+		card.setSide('front');
+		card.setSide('back');
+	</script>
+  </body>
+</html>

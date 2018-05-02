@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HTML5 Deck of Cards</title>
+    <link href="example.css" rel="stylesheet">
+	<style>
+		input:focus{
+			outline: none;
+		}
+	</style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <div id="container1"></div>
+	<input id="Barcode" type="text" value=""   style="background-color:#45a173;border-width:0px" >
+    <script src="/dist/deck.js"></script>
+    <script src="/js/jquery/1.12.4/jquery.min.js"></script>
+	
+	<script>
+	
+	(function($)
+	{
+		jQuery.fn.setfocus = function()
+		{
+			return this.each(function()
+			{
+				var dom = this;
+				setTimeout(function()
+				{
+					try { dom.focus(); } catch (e) { } 
+				}, 0);
+			});
+		};
+	})(jQuery);
+	$( document ).ready(function() {
+	   $('#Barcode').setfocus();
+	   
+	    <!-- $('#Barcode').keypress(function( event ) { -->
+	
+		<!-- }); -->
+	});
+	var ranks = {
+		1 :'1',
+		2 :'1',
+		3 :'1',
+		4 :'1',
+		5 :'1',
+		6 :'1',
+		7 :'1',
+		8 :'1',
+		9 :'1',
+		10 :'A',
+		11 :'B',
+		12 :'C',
+		13 :'D',
+	}
+	
+	var suits ={
+		1:'d',
+		2:'c',
+		3:'h',
+		4:'s',
+	}
+	
+	var $container = $('#container')[0];
+	// create Deck
+	var deck = Deck();
+	
+	var i = 0;
+	var banky=1
+	var playery=100;
+	var players = 2;
+	var handcard =[];
+	var playercard ={};
+	var show = 0;
+	var newgame = 0;
+	deck.mount($container);
+	deck.shuffle();
+	
+	//deck.sort();
+	function findObjectByKey(array, rank, suit) {
+		for (var i = 0; i < array.length; i++) {
+			if (array[i]['rank'] === rank && array[i]['suit'] === suit) {
+				return array[i];
+			}
+		}
+		return null;
+	}
+	function getRandom(minNum,maxNum){
+		return n = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;  ;
+	};
+	function deal()
+	{
+		if(handcard.length>=players*5)
+		{
+			return false;
+		}
+		var po = (window.innerWidth)*-1+77.5*2+80.5*i;
+		// add to DOM
+		var rank = getRandom(1,13);
+		var suit = getRandom(0,3);
+		var temp = findObjectByKey(handcard,rank,suit);
+		if (temp !=null)
+		{
+			return false;
+		}
+		var _card =findObjectByKey(deck.cards,rank,suit);
+		handcard.push(_card);
+		if(typeof playercard[i%players] == "undefined")
+		{
+			playercard[i%players] = [];
+		}
+		playercard[i%players].push(_card); 
+		var y = (i%players==0) ? banky:playery
+		_card.animateTo(
+			{
+				delay: 100 , 
+				duration: 100,
+				x:  po,
+				y:   110
+			}
+		)
+		i++;
+		if(handcard.length == players*5)
+		{
+			show = 1;
+		}
+	}
+	$('#Barcode').keydown(function(e) {
+		if(newgame == 0)
+		{
+			<!-- if() -->
+		}
+		if(newgame ==1)
+		{
+			deck.shuffle();
+			handcard.forEach(function (card, i) {
+				card.setSide('back');
+			})
+			handcard =[];
+			i=0;
+			newgame=0;
+			show=0;
+			 
+			return false;
+		}
+		
+		if(e.keyCode ==13)
+		{
+			var Barcode = $('#Barcode').val();
+			$('#card').text(Barcode);
+			$('#Barcode').val('');
+			event.preventDefault();
+			deal();
+		}
+		
+		if(show==1 && e.keyCode ==110)
+		{
+			newgame  =1;
+			handcard.forEach(function (card, i) {
+				card.setSide('front');
+			})
+			$.each(playercard,function(key,value){
+				<!-- $.eachtgrg -->
+			})
+			return false;
+		}
+		
+		return false;
+	});
+		
+		<!-- deck.cards[0].setSide('front'); -->
+		
+	
+	</script>
+  </body>
+</html>
