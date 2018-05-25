@@ -16,6 +16,13 @@
 		
 	</div>
     <div id="container"></div>
+	<select name="players" id="players">
+		<option value="1">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+		<option value="4">4</option>
+		<option value="5">5</option>
+	</select>
 	<input  type="input"  autocomplete="off" id="Barcode">
     <script src="/dist/deck.js"></script>
     <script src="/js/jquery/1.12.4/jquery.min.js"></script>
@@ -23,6 +30,22 @@
 	
 	<script>
 	
+	var arr = [7,8,3,3,9];
+	 function num(arr){
+		for(var i=0;i<arr.length-2;i++){
+			for(var j=i+1;j<arr.length-1;j++){
+				for(var k=j+1;k<arr.length;k++){
+					if((arr[i]+arr[j]+arr[k])%10 == 0){
+						arr.splice(k,1).splice(j,1).splice(i,1);
+						return (arr[0]+arr[1])%10
+					}
+				}
+			}
+		}
+		return '没牛'
+	 }
+
+	console.log(num(arr));
 	(function($){
 		jQuery.fn.setfocus = function()
 		{
@@ -163,7 +186,7 @@
 			playercard[i%players] = [];
 		}
 		playercard[i%players].push(_card); 
-		var y = (i%players==0) ? banky:playery
+		<!-- var y = (i%players==0) ? banky:playery -->
 		_card.animateTo(
 			{
 				delay: 100 , 
@@ -175,29 +198,12 @@
 		i++;
 		if(handcard.length == players*5)
 		{
-			show = 1;
+			step = 3;
 		}
 	}
 
 	$('#Barcode').keydown(function(e) {
 
-		
-		if(step == 0 && e.keyCode ==13)
-		{
-			players = parseInt($('#Barcode').val());
-			console.log(players);
-			if(players >0 || players<6)
-			{
-				step = 1;
-			}
-			$('#Barcode').val('');
-			return false; 
-		}
-		
-		if(newgame == 0)
-		{
-			<!-- if() -->
-		}
 		if(newgame ==1)
 		{
 			deck.shuffle();
@@ -213,7 +219,43 @@
 		
 		}
 		
-		if(e.keyCode ==13 && step ==2)
+		if(step==0 && e.keyCode ==110)
+		{
+			step = 1;
+			return false;
+		}
+		
+		if(step==0)
+		{
+			players =  e.keyCode -96;
+			if(players>5)
+			{
+				players = 5;
+			}
+			
+			if(players <=1)
+			{
+				players = 1;
+			}
+			$('#players').val(players);
+			return false;
+		}
+
+		if(step == 1 && e.keyCode ==13)
+		{
+			<!-- players = parseInt($('#Barcode').val()); -->
+			if(players >0 || players<6)
+			{
+				step = 1;
+			}
+			$('#Barcode').val('');
+			//return false; 
+		}
+		
+
+		
+		
+		if(step == 1 && e.keyCode ==13)
 		{
 			var Barcode = $('#Barcode1').val();
 			$('#card').text(Barcode);
@@ -222,25 +264,37 @@
 			deal();
 		}
 		
-		if(show==1 && e.keyCode ==110)
+		
+		if(step==3 && e.keyCode ==111)
 		{
 			newgame  =1;
-			
+			step=0;
 			handcard.forEach(function (card, i) {
 				card.setSide('front');
 			})
 			$.each(playercard,function(key,value){
 				var total = 0;
+				var tempary = new Array();
 				$.each(value,function(key1,value1)
 				{
-					<!-- var total =  -->
-					if(value1.rank <10)
+				
+					if(value1.rank>10)
 					{
-						total+=value1.rank;
+						tempary.push(0) ;
+					}else
+					{
+						tempary.push(value1.rank) ;
 					}
 					
+					<!-- var total =  -->
+					<!-- if(value1.rank <10) -->
+					<!-- { -->
+						<!-- total+=value1.rank; -->
+						<!-- total = total%10; -->
+					<!-- } -->
+					
 				})
-				console.log(total%10);
+				<!-- console.log(//(tempary)); -->
 			})
 			return false;
 		}
@@ -249,6 +303,48 @@
 	});
 		
 	
+	
+	//排列組合用的維度
+    var dimensions = [1,2];
+    <!-- dimensions.push(["紅", "綠", "藍"]); -->
+    <!-- dimensions.push(["男", "女"]); -->
+    <!-- dimensions.push(["XL", "L", "M", "S"]); -->
+    //dimensions.push(["純綿", "排汗"]);
+     
+    //用以存放結果的陣列
+    var results = [];
+     
+    //使用遞迴方式排列出所有組合
+    //共有兩個傳入參數，目前處理的維度、排列組合時已累積的字首
+    function explore(curDim, prefix) {
+         
+        //取出下一層維度(Remove the first item)
+        var nextDim = dimensions.shift();
+         
+        for (var i = 0; i < curDim.length; i++) {
+            if (nextDim) 
+                //若仍有下一層維度，繼續展開
+                //並將傳入字首加上目前維度選項成為下一層的字首
+                explore(nextDim, prefix + curDim[i] );
+            else
+                //若已無下一層，則傳入字首加上目前維度選項成為結果
+                results.push(prefix + curDim[i]);
+        }
+         
+        //將下層維度存回，供上層維度其他選項使用
+        if (nextDim) dimensions.push(nextDim);
+    }
+     
+    //傳入第一層維度開始演算
+    explore(dimensions.shift(), "");
+     
+    //列出結果
+    var html = [];
+    $.each(results, function (idx, val) {
+        html.push("" + val + "");
+    });
+     console.log(html);
+    <!-- $("#disp").html(html.join(""));     -->
 	</script>
   </body>
 </html>
